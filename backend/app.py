@@ -1,7 +1,11 @@
-# All necessary imports are included
 from flask import Flask, request, jsonify, send_from_directory
 import subprocess
 import os
+import asyncio
+from threading import Thread
+
+# Import Playwright for advanced scraping
+from playwright.async_api import async_playwright
 
 # The Flask app is initialized correctly to serve the frontend
 app = Flask(__name__, static_folder='../frontend', static_url_path='/')
@@ -54,6 +58,49 @@ def execute_code():
 
     except subprocess.TimeoutExpired:
         return jsonify({'error': 'Execution timed out after 5 seconds.'}), 408
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+# Helper function to run async Playwright code in a thread
+def run_async_playwright(coro):
+    return asyncio.run(coro)
+
+# New API endpoint for Playwright scraping
+@app.route('/scrape/playwright', methods=['POST'])
+def scrape_playwright():
+    data = request.get_json()
+    url = data.get('url')
+    selector = data.get('selector')
+
+    if not url or not selector:
+        return jsonify({'error': 'URL and selector are required.'}), 400
+
+    try:
+        # Run Playwright scraping in a separate thread to avoid blocking
+        result = {}
+
+        def scrape():
+            async def run():
+                async with async_playwright() as p:
+                    browser = await p.chromium.launch()
+                    page = await browser.new_page()
+                    await page.goto(url)
+                    content = await page.text_content(selector)
+                    await browser.close()
+                    return content
+
+            content = asyncio.run(run())
+            result['content'] = content
+
+        thread = Thread(target=scrape)
+        thread.start()
+        thread.join()
+
+        if 'content' in result:
+            return jsonify({'content': result['content']})
+        else:
+            return jsonify({'error': 'Failed to scrape content.'}), 500
+
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 

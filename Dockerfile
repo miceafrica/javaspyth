@@ -32,6 +32,9 @@ RUN pip install --no-cache-dir --upgrade pip \
 COPY backend/package.json .
 RUN npm install
 
+# --- Install Playwright and browsers ---
+RUN pip install playwright && playwright install
+
 # --- Copy Application Code ---
 COPY frontend ./frontend/
 COPY backend ./backend/
@@ -48,6 +51,5 @@ WORKDIR /app/backend
 # Expose the port
 EXPOSE 8080
 
-# --- CORRECTED COMMAND ---
-# Explicitly tell Gunicorn to add the parent directory to the Python path
-CMD ["gunicorn", "--bind", "0.0.0.0:8080", "--timeout", "120", "--pythonpath", "/app", "backend.app:app"]
+# The command to run the application
+CMD ["gunicorn", "--bind", "0.0.0.0:8080", "--timeout", "120", "app:app"]
