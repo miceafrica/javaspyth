@@ -1,0 +1,16 @@
+# Web & App Framework
+Flask
+gunicorn
+
+# Web Scraping & API Calls
+requests
+beautifulsoup4
+lxml
+html2text
+
+# Data Handling
+pandas
+
+# AI & Machine Learning
+ollama
+huggingface-hub

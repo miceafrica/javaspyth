@@ -1,0 +1,11 @@
+{
+  "name": "code-executor-backend-pro",
+  "version": "1.0.0",
+  "description": "Comprehensive dependencies for a JS execution sandbox",
+  "dependencies": {
+    "axios": "^1.7.2",
+    "cheerio": "^1.0.0-rc.12",
+    "ollama": "^0.5.1",
+    "@huggingface/inference": "^2.7.0"
+  }
+}

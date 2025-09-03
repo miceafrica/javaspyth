@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Code Executor</title>
+    <style>
+        body { font-family: sans-serif; margin: 2em; max-width: 800px; margin: 2em auto; }
+        textarea { width: 100%; height: 200px; font-family: monospace; }
+        #output { background-color: #9af192; padding: 1em; white-space: pre-wrap; font-family: monospace; border: 1px solid #ccc; }
+    </style>
+</head>
+<body>
+    <h1>Code Executor</h1>
+    <select id="language">
+        <option value="python">Python</option>
+        <option value="javascript">JavaScript</option>
+    </select>
+    <br><br>
+    <textarea id="codeInput" placeholder="Enter your code here..."></textarea>
+    <br><br>
+    <button onclick="executeCode()">Run Code</button>
+    <br><br>
+    <h2>Output:</h2>
+    <pre id="output"></pre>
+
+    <script>
+        async function executeCode() {
+            const language = document.getElementById('language').value;
+            const code = document.getElementById('codeInput').value;
+            const outputElement = document.getElementById('output');
+            outputElement.textContent = 'Executing...';
+
+            try {
+                // The API endpoint is now at the relative path /execute
+                const response = await fetch('/execute', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ language, code }),
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    outputElement.textContent = result.output;
+                } else {
+                    outputElement.textContent = 'Error:\n' + result.error;
+                }
+            } catch (error) {
+                outputElement.textContent = 'Failed to connect to the server. ' + error;
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,18 @@
+# Ignore the Python virtual environment
+venv/
+
+# Ignore Python cache files
+__pycache__/
+*.pyc
+
+# Ignore Node.js dependencies folder (they are installed inside the container)
+node_modules/
+
+# Ignore Git directory and files
+.git/
+.gitignore
+
+# Ignore IDE and OS-specific files
+.vscode/
+.idea/
+.DS_Store
